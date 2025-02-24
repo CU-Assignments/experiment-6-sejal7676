@@ -1,0 +1,55 @@
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.DoubleSummaryStatistics;
+import java.util.stream.Collectors;
+
+class Product {
+    String name;
+    String category;
+    double price;
+
+    Product(String name, String category, double price) {
+        this.name = name;
+        this.category = category;
+        this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{name='" + name + "', category='" + category + "', price=" + price + "}";
+    }
+}
+
+public class ProductProcessor {
+    public static void main(String[] args) {
+        List<Product> products = new ArrayList<>();
+        products.add(new Product("Laptop", "Electronics", 1200));
+        products.add(new Product("Smartphone", "Electronics", 800));
+        products.add(new Product("Refrigerator", "Appliances", 1500));
+        products.add(new Product("Microwave", "Appliances", 200));
+        products.add(new Product("T-shirt", "Clothing", 30));
+
+        Map<String, List<Product>> productsByCategory = products.stream()
+                .collect(Collectors.groupingBy(product -> product.category));
+
+        Map<String, Product> mostExpensiveByCategory = productsByCategory.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                                .max(Comparator.comparingDouble(product -> product.price))
+                                .orElse(null)
+                ));
+
+        DoubleSummaryStatistics stats = products.stream()
+                .collect(Collectors.summarizingDouble(product -> product.price));
+        double averagePrice = stats.getAverage();
+
+        System.out.println("Most expensive products by category:");
+        mostExpensiveByCategory.forEach((category, product) -> 
+                System.out.println(category + ": " + product));
+
+        System.out.println("Average price of all products: " + averagePrice);
+    }
+}
