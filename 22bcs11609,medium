@@ -1,0 +1,37 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+class Student {
+    String name;
+    double marks;
+
+    Student(String name, double marks) {
+        this.name = name;
+        this.marks = marks;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{name='" + name + "', marks=" + marks + "}";
+    }
+}
+
+public class StudentFilterAndSort {
+    public static void main(String[] args) {
+        List<Student> students = new ArrayList<>();
+        students.add(new Student("John", 85));
+        students.add(new Student("Jane", 65));
+        students.add(new Student("Tom", 90));
+        students.add(new Student("Lucy", 70));
+
+        List<String> topStudents = students.stream()
+                .filter(student -> student.marks > 75)
+                .sorted((s1, s2) -> Double.compare(s2.marks, s1.marks))
+                .map(student -> student.name)
+                .collect(Collectors.toList());
+
+        // Print names of top students
+        topStudents.forEach(System.out::println);
+    }
+}
